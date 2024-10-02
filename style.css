@@ -6,7 +6,7 @@
     font-family: 'Ubuntu', sans-serif;
 }
 body{
-    background-color: #333;
+    background-color: #262a2b;
     color: #fff;
 
     min-height: 100vh;
@@ -34,4 +34,6 @@ button{
     height: 30px;
     width: 60px;
     margin: .5rem;
+    color: #fff;
+    background: #6b6b6b;
 }
