@@ -17,13 +17,21 @@ body{
     align-items: center;
 }
 
-img.card{
+img.card{ /* 726 : 500 */
     aspect-ratio: 1/1;
     object-fit: contain;
     height: 200px;
-    margin: .2rem;
+    width: 135px;
+    margin: 0 2rem 0 0;
+    cursor: context-menu;
 }
-
+img.card:last-child{
+    margin: 0;
+}
+.cards{
+    height: 200px;
+    margin: .5rem 0;
+}
 h2{
     margin-top: .5rem;
 }
@@ -36,4 +44,5 @@ button{
     margin: .5rem;
     color: #fff;
     background: #6b6b6b;
+    cursor: pointer;
 }

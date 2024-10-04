@@ -71,8 +71,17 @@ const emptyDeck = {
     Spades: []
 }
 
-let currentDeck = Deck;
+let currentDeck = deepCopyDeck(Deck);  // Initialize with a deep copy
 
+// Function to deeply copy the deck
+function deepCopyDeck(deck){
+    return {
+        Clubs: [...deck.Clubs],
+        Diamonds: [...deck.Diamonds],
+        Hearts: [...deck.Hearts],
+        Spades: [...deck.Spades]
+    };
+}
 function cardsleft(){
     return [
         currentDeck.Clubs.length,
@@ -88,7 +97,7 @@ function addScore(num){
     score = 0;
     playerCards.forEach(e => {
         if(e === 'A'){
-            score += (score < 11) ? 10 : 1;
+            score += (score < 11) ? 11 : 1;
         }else{
             score += isNaN(e) ? 10 : parseInt(e);
         }
@@ -96,23 +105,34 @@ function addScore(num){
     
 }
 
+function reshuffle(){
+    alert('Reshuffling ...')
+    currentDeck = deepCopyDeck(Deck);
+    setTimeout(200);
+}
+
+function createCard(imgSource){
+    let newCard = document.createElement('img');
+    newCard.src = imgSource;
+    newCard.classList.add('card');
+    document.querySelector('.cards2').append(newCard);
+}
+
 function cardAvail(num){
-    // Filter available suits that still have cards left
     const availableCards = ['Clubs', 'Diamonds', 'Hearts', 'Spades'].filter((suit, idx) => num[idx] > 0);
 
     // Check if there are any available cards
     if(availableCards.length === 0){
         console.log('No cards available. Deck is empty.');
-        return;  // Prevent further execution if no cards are left
+        return;
     }
 
-    // Select a random suit from available suits
     const randomCard = availableCards[Math.floor(Math.random() * availableCards.length)];
 
     // Ensure that currentDeck[randomCard] exists and has cards
     if(!currentDeck[randomCard] || currentDeck[randomCard].length === 0){
         console.log(`Error: ${randomCard} has no cards left.`);
-        return;  // Exit if there's an issue with the selected suit
+        return;
     }
     
     const cardIndex = Math.floor(Math.random() * currentDeck[randomCard].length);
@@ -120,12 +140,16 @@ function cardAvail(num){
 
     addScore(card);
 
-    document.getElementById('card').src = `./${randomCard}/${card}.png`;
+    createCard(`./${randomCard}/${card}.png`);
+
+    /*document.querySelectorAll('.card').forEach(e => {
+        e.src = `./${randomCard}/${card}.png`;
+    });*/
 
     currentDeck[randomCard].splice(cardIndex, 1);
 
-        console.log(`Card removed from ${randomCard}: ${card}`);
-        console.log(currentDeck);
+    console.log(`Card removed from ${randomCard}: ${card}`);
+    console.log(currentDeck);
 }
 
 function isDeckEmpty() {
@@ -133,8 +157,8 @@ function isDeckEmpty() {
 }
 
 function addCard(){
-    if (isDeckEmpty()) {
-        currentDeck = {...Deck};  // Reset to the original deck if empty
+    if(isDeckEmpty()){
+        reshuffle();
     }
     cardAvail(cardsleft());
 }
