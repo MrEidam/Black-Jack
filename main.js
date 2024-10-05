@@ -102,7 +102,7 @@ function addScore(num){
             score += isNaN(e) ? 10 : parseInt(e);
         }
     });
-    
+    document.querySelector('h2').innerHTML = score;
 }
 
 function reshuffle(){
@@ -119,6 +119,7 @@ function createCard(imgSource){
 }
 
 function cardAvail(num){
+    if(score>21) return;
     const availableCards = ['Clubs', 'Diamonds', 'Hearts', 'Spades'].filter((suit, idx) => num[idx] > 0);
 
     // Check if there are any available cards
@@ -161,10 +162,22 @@ function addCard(){
         reshuffle();
     }
     cardAvail(cardsleft());
+    if(score > 21){
+        alert("You lost");
+    }
 }
 
 
 function hit(){
     addCard();
+    if(score === 21){
+        alert("BLACKJACK!")
+    }
+}
+
+function stand(){
+    document.getElementById('playerHand').innerHTML = "";
+    score = 0;
+    playerCards = [];
     document.querySelector('h2').innerHTML = score;
 }
