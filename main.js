@@ -94,6 +94,18 @@ function cardsleft(){
 function addScore(num){
     playerCards.push(num);
 
+    //? Filters out Aces
+    const withoutAces = playerCards.filter(e => e !== 'A');
+
+    const count = playerCards.length-withoutAces.length;
+
+    //? Adds the aces to the end
+    for(let i=0; i<count;i++){
+        withoutAces.push('A');
+    }
+
+    playerCards = [...withoutAces];
+
     score = 0;
     playerCards.forEach(e => {
         if(e === 'A'){
