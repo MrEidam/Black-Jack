@@ -1,4 +1,6 @@
 let playerCards = [];
+let dealerCards = [];
+let dealerScore = 0;
 let score = 0;
 
 const Deck = {
@@ -114,7 +116,33 @@ function addScore(num){
             score += isNaN(e) ? 10 : parseInt(e);
         }
     });
-    document.querySelector('h2').innerHTML = score;
+    document.querySelector('#playerScore').innerHTML = score;
+}
+
+function addDealerScore(num){
+    dealerCards.push(num);
+
+    //? Filters out Aces
+    const withoutAces = dealerCards.filter(e => e !== 'A');
+
+    const count = dealerCards.length-withoutAces.length;
+
+    //? Adds the aces to the end
+    for(let i=0; i<count;i++){
+        withoutAces.push('A');
+    }
+
+    dealerCards = [...withoutAces];
+
+    dealerScore = 0;
+    dealerCards.forEach(e => {
+        if(e === 'A'){
+            dealerScore += (dealerScore < 11) ? 11 : 1;
+        }else{
+            dealerScore += isNaN(e) ? 10 : parseInt(e);
+        }
+    });
+    document.querySelector('#dealerScore').innerHTML = dealerScore;
 }
 
 function reshuffle(){
@@ -123,11 +151,12 @@ function reshuffle(){
     setTimeout(200);
 }
 
-function createCard(imgSource){
+function createCard(imgSource, people){
     let newCard = document.createElement('img');
     newCard.src = imgSource;
     newCard.classList.add('card');
-    document.querySelector('.cards2').append(newCard);
+    if(people === 'human') document.querySelector('.cards2').append(newCard);
+    else document.querySelector('.cards1').append(newCard);
 }
 
 function cardAvail(num){
@@ -152,17 +181,36 @@ function cardAvail(num){
     const card = currentDeck[randomCard][cardIndex];
 
     addScore(card);
-
-    createCard(`./${randomCard}/${card}.png`);
-
-    /*document.querySelectorAll('.card').forEach(e => {
-        e.src = `./${randomCard}/${card}.png`;
-    });*/
-
+    createCard(`./${randomCard}/${card}.png`, 'human');
     currentDeck[randomCard].splice(cardIndex, 1);
 
     console.log(`Card removed from ${randomCard}: ${card}`);
-    console.log(currentDeck);
+}
+
+function dealerCardGet(num){
+    if(dealerScore>18) return;
+    const availableCards = ['Clubs', 'Diamonds', 'Hearts', 'Spades'].filter((suit, idx) => num[idx] > 0);
+
+    if(availableCards.length === 0){
+        console.log('No cards available. Deck is empty.');
+        return;
+    }
+
+    const randomCard = availableCards[Math.floor(Math.random() * availableCards.length)];
+
+    if(!currentDeck[randomCard] || currentDeck[randomCard].length === 0){
+        console.log(`Error: ${randomCard} has no cards left.`);
+        return;
+    }
+
+    const cardIndex = Math.floor(Math.random()*currentDeck[randomCard].length);
+    const card = currentDeck[randomCard][cardIndex];
+
+    addDealerScore(card);
+    createCard(`./${randomCard}/${card}.png`);
+    currentDeck[randomCard].splice(cardIndex, 1);
+
+    console.log(`Card removed from ${randomCard}: ${card}`);
 }
 
 function isDeckEmpty() {
@@ -175,21 +223,76 @@ function addCard(){
     }
     cardAvail(cardsleft());
     if(score > 21){
-        alert("You lost");
+        resultText('lost');
     }
 }
 
+function addCardDealer(){
+    if(isDeckEmpty()){
+        reshuffle();
+    }
+    dealerCardGet(cardsleft());
+    if(dealerScore<18){
+        addCardDealer();
+    }
+}
+
+async function resultText(res){
+    let text = document.createElement('h1');
+    text.classList.add('result');
+    if(res==='won'){
+        text.classList.add('won');
+        text.innerText = "You've won!";
+    }else if(res==='lost'){
+        text.classList.add('lost');
+        text.innerText = "You've lost!";
+    }else if(res==='bj'){
+        text.classList.add('blackjack');
+        text.innerText = "BLACKJACK";
+    }else if(res==='draw'){
+        text.classList.add('draw');
+        text.innerHTML = "It's a Draw!"
+    }
+    document.body.append(text);
+    setTimeout(() => {
+        text.remove();
+    }, 600);
+    document.querySelector('#buttons').style.display = 'none';
+    document.querySelector('#reset').style.display = 'flex';
+}
+
+function dealerHit(){
+    addCardDealer();
+}
 
 function hit(){
     addCard();
     if(score === 21){
-        alert("BLACKJACK!")
+        resultText('bj');
+        //- Add 1.5 money
     }
 }
 
 function stand(){
+    dealerHit();
+    if(score>21 || (score < dealerScore && dealerScore<=21)){
+        resultText('lost');
+    }else if(dealerScore>21 || (score > dealerScore && score<=21)){
+        resultText('won');
+    }else{
+        resultText('draw');
+    }
+}
+
+function reset(){
     document.getElementById('playerHand').innerHTML = "";
+    document.querySelector('.cards1').innerHTML = "";
     score = 0;
+    dealerScore = 0;
     playerCards = [];
-    document.querySelector('h2').innerHTML = score;
+    dealerCards = [];
+    document.querySelector('#playerScore').innerHTML = score;
+    document.querySelector('#dealerScore').innerHTML = '???';
+    document.querySelector('#buttons').style.display = 'flex';
+    document.querySelector('#reset').style.display = 'none';
 }
