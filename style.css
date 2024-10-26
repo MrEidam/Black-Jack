@@ -22,7 +22,7 @@ img.card{ /* 726 : 500 */
     object-fit: contain;
     height: 200px;
     width: 135px;
-    margin: 0 2rem 0 0;
+    margin: 0 -3rem 0 0;
     cursor: context-menu;
 }
 img.card:last-child{
@@ -43,6 +43,7 @@ h2{
     transform: translate(-50%, -50%);
     filter: drop-shadow(1.5px 1.5px 6px #000);
     text-transform: uppercase;
+    text-align: center;
     font-size: 100px;
     animation: pop 0.5s ease-in-out;
 }
@@ -91,4 +92,14 @@ button#resetBTN{
 }
 #reset{
     display: none;
+}
+
+.gray{
+    filter: grayscale(1) opacity(.25);
+}
+
+@media screen and (max-width: 500px){
+    img.card{
+        margin: 0 -6.5rem 0 0;
+    }
 }

@@ -75,6 +75,10 @@ const emptyDeck = {
 
 let currentDeck = deepCopyDeck(Deck);  // Initialize with a deep copy
 
+document.body.onload = () => {
+    startCards();
+};
+
 // Function to deeply copy the deck
 function deepCopyDeck(deck){
     return {
@@ -214,7 +218,7 @@ function dealerCardGet(num){
 }
 
 function isDeckEmpty() {
-    return ['Clubs', 'Diamonds', 'Hearts', 'Spades'].every(suit => currentDeck[suit].length === 0);
+    return ['Clubs', 'Diamonds', 'Hearts', 'Spades'].every(idx => currentDeck[idx].length === 0);
 }
 
 function addCard(){
@@ -224,15 +228,16 @@ function addCard(){
     cardAvail(cardsleft());
     if(score > 21){
         resultText('lost');
+        stand(true);
     }
 }
 
-function addCardDealer(){
+function addCardDealer(option){
     if(isDeckEmpty()){
         reshuffle();
     }
     dealerCardGet(cardsleft());
-    if(dealerScore<18){
+    if(dealerScore<18 && !(option)){
         addCardDealer();
     }
 }
@@ -242,16 +247,16 @@ async function resultText(res){
     text.classList.add('result');
     if(res==='won'){
         text.classList.add('won');
-        text.innerText = "You've won!";
+        text.innerText = "Victory!";
     }else if(res==='lost'){
         text.classList.add('lost');
-        text.innerText = "You've lost!";
+        text.innerText = "You lost!";
     }else if(res==='bj'){
         text.classList.add('blackjack');
         text.innerText = "BLACKJACK";
     }else if(res==='draw'){
         text.classList.add('draw');
-        text.innerHTML = "It's a Draw!"
+        text.innerHTML = "Push";
     }
     document.body.append(text);
     setTimeout(() => {
@@ -261,24 +266,33 @@ async function resultText(res){
     document.querySelector('#reset').style.display = 'flex';
 }
 
-function dealerHit(){
-    addCardDealer();
+function dealerHit(option){
+    addCardDealer(option);
 }
 
 function hit(){
     addCard();
-    if(score === 21){
+    if(score === 21 && playerCards.length === 2){
         resultText('bj');
         //- Add 1.5 money
     }
 }
 
-function stand(){
-    dealerHit();
+function startCards(){
+    hit();
+    dealerCardGet(cardsleft());
+    hit();
+}
+
+function stand(option){
+    if(score === 0) return;
+    dealerHit(option);
     if(score>21 || (score < dealerScore && dealerScore<=21)){
         resultText('lost');
+        document.querySelector('.cards2').classList.add('gray');
     }else if(dealerScore>21 || (score > dealerScore && score<=21)){
         resultText('won');
+        document.querySelector('.cards1').classList.add('gray');
     }else{
         resultText('draw');
     }
@@ -295,4 +309,9 @@ function reset(){
     document.querySelector('#dealerScore').innerHTML = '???';
     document.querySelector('#buttons').style.display = 'flex';
     document.querySelector('#reset').style.display = 'none';
+
+    document.querySelector('.cards1').classList.remove('gray');
+    document.querySelector('.cards2').classList.remove('gray');
+
+    startCards();
 }
