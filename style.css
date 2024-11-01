@@ -9,7 +9,7 @@ body{
     background-color: #262a2b;
     color: #fff;
 
-    min-height: 100vh;
+    min-height: 100dvh;
 
     display: flex;
     flex-direction: column;
