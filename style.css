@@ -28,6 +28,9 @@ img.card{ /* 726 : 500 */
 img.card:last-child{
     margin: 0;
 }
+.backCard{
+    border-radius: 10px;
+}
 .cards{
     height: 200px;
     margin: .5rem 0;
@@ -67,7 +70,7 @@ h2{
 @keyframes pop{
     0%{
         scale: 0.5;
-        transform: translate(-100%, -50%);
+        transform: translate(-50%, -50%);
     }
     100%{
         scale: 1;
@@ -103,3 +106,32 @@ button#resetBTN{
         margin: 0 -6.5rem 0 0;
     }
 }
+
+.reshufl{
+    position: absolute;
+    top: 0;
+    background-color: #444;
+    padding: 1rem 2rem 1.5rem 2rem;
+    /*border-radius: 0 0 3rem 3rem;*/
+    animation: downTop linear 2s;
+}
+
+@keyframes downTop{
+    0%{
+        transform: translateY(-100%);
+        border-radius: 3rem;
+    }
+    50%{
+        transform: translateY(0%);
+        border-radius: 0 0 3rem 3rem;
+    }
+    75%{
+        transform: translateY(0%);
+        border-radius: 0 0 3rem 3rem;
+    }
+    100%{
+        transform: translateY(-100%);
+        border-radius: 3rem;
+    }
+}
+

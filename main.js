@@ -150,9 +150,14 @@ function addDealerScore(num){
 }
 
 function reshuffle(){
-    alert('Reshuffling ...')
+    let reshufl = document.createElement('h1');
+    reshufl.classList.add('reshufl');
+    reshufl.innerHTML = 'Reshuffling';
     currentDeck = deepCopyDeck(Deck);
-    setTimeout(200);
+    document.body.append(reshufl);
+    setTimeout(() => {
+        reshufl.remove();
+    }, 2000);
 }
 
 function createCard(imgSource, people){
@@ -270,6 +275,15 @@ function dealerHit(option){
     addCardDealer(option);
 }
 
+function dealerFakeCardGet(){
+    let backCard = document.createElement('img');
+    backCard.src = './BlackJackCards/BACK.png';
+    backCard.classList.add('card');
+    backCard.classList.add('backCard');
+    document.querySelector('#dealerScore').innerHTML += ` + ???`;
+    document.querySelector('.cards1').append(backCard);
+}
+
 function hit(){
     addCard();
     if(score === 21 && playerCards.length === 2){
@@ -282,9 +296,11 @@ function startCards(){
     hit();
     dealerCardGet(cardsleft());
     hit();
+    dealerFakeCardGet();
 }
 
 function stand(option){
+    document.querySelector('.backCard').remove();
     if(score === 0) return;
     dealerHit(option);
     if(score>21 || (score < dealerScore && dealerScore<=21)){
